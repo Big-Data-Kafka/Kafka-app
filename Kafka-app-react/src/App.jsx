@@ -1,9 +1,19 @@
-import React from 'react'
+import React from "react";
+import Login from "./pages/Login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
-  return (
-    <div>Kafka Project</div>
-  )
-}
+	return (
+		<BrowserRouter>
+			<Routes>
+				<Route index element={<Home />} />
 
-export default App
+				<Route path="login" element={<Login />} />
+				<Route path="product/:id" element={<Product />} />
+				<Route path="dashboard" element={<Dashboard />} />
+			</Routes>
+		</BrowserRouter>
+	);
+};
+
+export default App;
