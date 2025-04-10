@@ -1,0 +1,20 @@
+# Root-level ignores
+node_modules/
+*.log
+.env
+
+# Ignore builds and temp files
+dist/
+build/
+
+# React/Vite specific (in kafka-app-react)
+kafka-app-react/node_modules/
+kafka-app-react/dist/
+
+# Node server specific (in Kafka-app-server)
+Kafka-app-server/node_modules/
+Kafka-app-server/prisma/generated/prisma
+
+# OS-specific
+.DS_Store
+Thumbs.db
