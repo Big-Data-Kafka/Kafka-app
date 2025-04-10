@@ -13,8 +13,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ActionType {
+  VIEW
+  BUY
+}
+
 model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  username  String?
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  username String?
   password String?
+  isAdmin  Boolean  @default(false)
+  action   Action[]
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  image       String?
+  description String?
+  name        String?
+  price       Float
+  action      Action[]
+}
+
+model Action {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String     @db.ObjectId
+  user      User       @relation(fields: [userId], references: [id])
+  productId String     @db.ObjectId
+  product   Product    @relation(fields: [productId], references: [id])
+  type      ActionType
 }
