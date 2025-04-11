@@ -1,5 +1,5 @@
 import { Kafka } from "kafkajs";
-import { PrismaClient } from "./prisma/generated/prisma";
+import { db } from "./lib/db.ts";
 
 const kafka = new Kafka({
 	clientId: "my-app",
@@ -7,23 +7,25 @@ const kafka = new Kafka({
 });
 
 const consumer = kafka.consumer({ groupId: "test-group" });
-const prisma = new PrismaClient();
 
 const run = async () => {
 	await consumer.connect();
-	await consumer.subscribe({ topic: "test", fromBeginning: true });
+	await consumer.subscribe({ topic: "action", fromBeginning: true });
 	await consumer.run({
 		eachMessage: async ({ topic, partition, message }) => {
-			console.log(message);
 			if (message.value) {
-				const { name, password } = JSON.parse(message.value.toString());
-				const createNull = await prisma.user.create({
+				console.log(JSON.parse(message.value.toString()));
+				const { userId, productId, action } = JSON.parse(
+					message.value.toString(),
+				);
+				const createdAction = await db.action.create({
 					data: {
-						username: name,
-						password,
+						userId,
+						productId,
+						type: action,
 					},
 				});
-				console.log(createNull);
+				console.log(createdAction);
 			}
 		},
 	});

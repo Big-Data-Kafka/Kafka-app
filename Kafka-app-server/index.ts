@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import authRoute from "./routes/auth";
 import productsRoute from "./routes/products";
+import actionRoute from "./routes/action";
 const app = express();
 
 app.use(
@@ -19,6 +20,7 @@ app.use(cookieParser());
 
 app.use("/", authRoute);
 app.use("/", productsRoute);
+app.use("/", actionRoute);
 
 const server = http.createServer(app);
 

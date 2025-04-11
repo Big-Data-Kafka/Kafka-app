@@ -21,8 +21,8 @@ export const login = async (req: express.Request, res: express.Response) => {
 
 		if (!user) return res.status(401).json({ error: "Invalid credentials!" });
 
-		// const match = await bcrypt.compare(password, user.password as string);
-		// if (!match) return res.status(401).json({ error: "Invalid credentials" });
+		const match = await bcrypt.compare(password, user.password as string);
+		if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
 		const token = jwt.sign(
 			{ id: user.id, username: user.username },
@@ -39,7 +39,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 		return res.status(200).json({ message: "Successful Login" });
 	} catch (err) {
 		console.log(err);
-		res.status(500).json({
+		return res.status(500).json({
 			error: "Server Error!",
 		});
 	}
@@ -60,12 +60,46 @@ export const logout = async (req: express.Request, res: express.Response) => {
 	}
 };
 
-export const hashPassword = async (
+export const checkAuth = async (
 	req: express.Request,
 	res: express.Response,
 ) => {
-	const { password } = req.params;
+	const token = req.cookies.token;
+	if (!token)
+		return res
+			.status(401)
+			.json({ authenticated: false, message: "Unauthorized: No token" });
 
-	const hashed = bcrypt.hash(password, 10);
-	res.status(201).send(hashed);
+	try {
+		const decoded = jwt.verify(token, JWT_SECRET);
+		return res.status(200).json({ authenticated: true, user: decoded });
+	} catch (err) {
+		console.log(err);
+		return res
+			.status(401)
+			.json({ authenticated: false, message: "Unauthorized: Invalid token" });
+	}
+};
+
+export const createUser = async (
+	req: express.Request,
+	res: express.Response,
+) => {
+	try {
+		const { username, password, isAdmin } = req.body;
+		const hashed = await bcrypt.hash(password, 10);
+		const user = await db.user.create({
+			data: {
+				username,
+				password: hashed,
+				isAdmin,
+			},
+		});
+		res.status(201).json(user);
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			error: "Server Error!",
+		});
+	}
 };

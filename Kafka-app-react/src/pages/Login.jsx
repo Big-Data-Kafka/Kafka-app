@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -11,8 +11,6 @@ const Login = () => {
 
 	const loginHandler = async () => {
 		setLoading(true);
-		console.log(usernameRef.current.value);
-		console.log(passwordRef.current.value);
 		try {
 			const res = await fetch("http://localhost:5000/api/login", {
 				method: "POST",
@@ -26,11 +24,9 @@ const Login = () => {
 				}),
 			});
 			const data = await res.json();
-			console.log(data);
 			setLoading(false);
 			if (res.ok) {
 				setError("");
-				console.log(data);
 				navigate("/");
 			} else {
 				setError(data.error);
@@ -41,6 +37,24 @@ const Login = () => {
 			setError("Something Went Wrong!");
 		}
 	};
+
+	useEffect(() => {
+		const checkAuth = async () => {
+			try {
+				const res = await fetch("http://localhost:5000/api/check-auth", {
+					credentials: "include",
+				});
+
+				if (res.ok) {
+					navigate("/");
+				}
+				return;
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		checkAuth();
+	}, []);
 
 	return (
 		<div className="h-screen">

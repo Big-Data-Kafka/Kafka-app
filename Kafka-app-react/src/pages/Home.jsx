@@ -9,22 +9,26 @@ const Home = () => {
 	const navigate = useNavigate();
 	useEffect(() => {
 		const fetchProducts = async () => {
-			setLoading(true);
-			const res = await fetch("http://localhost:5000/api/products", {
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const data = await res.json();
-			setLoading(false);
-			console.log(data);
-			if (res.status === 401) {
-				navigate("/login");
-				return;
-			} else if (res.ok) {
-				setProducts(data);
-			} else {
+			try {
+				setLoading(true);
+				const res = await fetch("http://localhost:5000/api/products", {
+					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+				const data = await res.json();
+				setLoading(false);
+				if (res.status === 401) {
+					navigate("/login");
+					return;
+				} else if (res.ok) {
+					setProducts(data);
+				} else {
+					setError(data.message);
+				}
+			} catch (err) {
+				console.log(err);
 				setError(data.message);
 			}
 		};
@@ -50,15 +54,21 @@ const Home = () => {
 	}
 
 	return (
-		<div className="grid grid-cols-4 gap-4">
-			{products.map((product) => (
-				<Card
-					id={product.id}
-					name={product.name}
-					image={product.image}
-					price={product.price}
-				/>
-			))}
+		<div>
+			<div className="grid grid-cols-4 gap-4 py-5">
+				{products.map((product) => (
+					<Card
+						key={product.id}
+						id={product.id}
+						name={product.name}
+						image={product.image}
+						price={product.price}
+					/>
+				))}
+			</div>
+			<div className="text-center font-bold text-lg pb-5">
+				No more products to show
+			</div>
 		</div>
 	);
 };
