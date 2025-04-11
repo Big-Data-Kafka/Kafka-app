@@ -1,10 +1,9 @@
 import React from "react";
-import { Outlet, useNavigate } from "react-router";
+import {useNavigate } from "react-router";
 
 const NavBar = () => {
 	const navigate = useNavigate();
 	return (
-		<div className="px-5 pt-2 py-4 h-screen">
 			<div className="w-full mb-7 flex justify-between">
 				<div className="font-bold text-5xl">Trendify</div>
 				<div className="flex items-center gap-x-4">
@@ -23,8 +22,6 @@ const NavBar = () => {
 					</button>
 				</div>
 			</div>
-			<Outlet />
-		</div>
 	);
 };
 
