@@ -32,13 +32,13 @@ export const login = async (req: express.Request, res: express.Response) => {
 
 		res.cookie("token", token, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production", // HTTPS only in production
+			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-			maxAge: 3600 * 1000, // 1 hour
+			maxAge: 3600 * 1000,
 		});
 		return res.status(200).json({ message: "Successful Login" });
-	} catch (error) {
-		console.log(error);
+	} catch (err) {
+		console.log(err);
 		res.status(500).json({
 			error: "Server Error!",
 		});

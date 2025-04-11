@@ -1,5 +1,5 @@
 import express from "express";
-import { hashPassword, login, logout } from "../controllers/auth.ts";
+import { hashPassword, login, logout } from "../controllers/auth";
 const router = express.Router();
 
 router.post("/api/login", login);

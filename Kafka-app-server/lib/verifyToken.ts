@@ -11,7 +11,7 @@ declare global {
 	}
 }
 
-const verifyToken = (
+export const verifyToken = (
 	req: express.Request,
 	res: express.Response,
 	next: express.NextFunction,
@@ -28,5 +28,3 @@ const verifyToken = (
 		return res.status(401).json({ error: "Unauthorized: Invalid token" });
 	}
 };
-
-module.exports = verifyToken;

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const Card = () => {
+const Card = ({ image, name, price }) => {
 	const navigate = useNavigate();
 	return (
 		<div
@@ -11,7 +11,7 @@ const Card = () => {
 				<a>
 					<img
 						className="w-full h-[200px] object-contain rounded-t-lg"
-						src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=2367&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+						src={image}
 						alt=""
 					/>
 				</a>
@@ -19,9 +19,9 @@ const Card = () => {
 
 			<div className="p-5 flex items-center justify-between flex-wrap">
 				<h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-					Addidas Shirt
+					{name}
 				</h5>
-				<p className="font-normal text-gray-700 ">Price: 500</p>
+				<p className="font-normal text-gray-700 ">Price: {price}</p>
 			</div>
 		</div>
 	);
