@@ -26,7 +26,7 @@ const Dashboard = () => {
         </div>
         {/* user Behavior table */}
         <div className="my-5">
-          <h5 className="text-2xl mb-4">User behavior table</h5>
+          <h5 className="text-2xl mb-4">User behavior c</h5>
           <FilterBox />
           <UserBehavior />
         </div>

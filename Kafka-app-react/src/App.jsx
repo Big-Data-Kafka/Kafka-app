@@ -1,6 +1,6 @@
 import React from "react";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard";
 import Product from "./pages/Product";
 import Home from "./pages/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -12,9 +12,9 @@ const App = () => {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="login" element={<Login />} />
           <Route path="product/:id" element={<Product />} />
         </Route>
+        <Route path="login" element={<Login />} />
         <Route path="dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
