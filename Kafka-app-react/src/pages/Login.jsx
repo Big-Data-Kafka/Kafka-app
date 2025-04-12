@@ -27,7 +27,9 @@ const Login = () => {
 			setLoading(false);
 			if (res.ok) {
 				setError("");
-				navigate("/");
+				data.isAdmin
+				? navigate("/dashboard")
+				: navigate("/");
 			} else {
 				setError(data.error);
 			}

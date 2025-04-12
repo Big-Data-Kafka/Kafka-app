@@ -59,88 +59,93 @@ const getVPByProduct = async () => {
       product: true,
     },
   });
-  const statmap = new Map();
+  const statMap = new Map();
   for (const action of actions) {
     const productId = action.productId;
-    if (!statmap.has(productId)) {
-      statmap.set(productId, {
+    if (!statMap.has(productId)) {
+      statMap.set(productId, {
         name: action.product.name,
         image: action.product.image,
         views: 0,
         purchases: 0,
       });
     }
-    if (action.type == "VIEW") statmap.get(productId).views++;
-    if (action.type == "BUY") statmap.get(productId).purchases++;
+    if (action.type == "VIEW") statMap.get(productId).views++;
+    if (action.type == "BUY") statMap.get(productId).purchases++;
   }
-  let statsArray = Array.from(statmap.values());
-  getVPByUser();
+  let statsArray = Array.from(statMap.values());
   return statsArray;
 };
-type UserStats = {
-    username: string;
-    views: number;
-    purchases: number;
-    v_count: Record<string, number>;
-    p_count: Record<string, number>;
-  };
-  
-  const getVPByUser = async () => {
+
+export const getUserStats = async (req: express.Request, res: express.Response) => {
+   try{
     const actions = await db.action.findMany({
-      include: {
-        user: true,
-        product: true,
-      },
-    });
+        include: {
+          user: true,
+          product: true,
+        },
+      });
+    
+      const statMap = new Map();
+    
+      for (const action of actions) {
+        const userId = action.userId;
+    
+        if (!statMap.has(userId)) {
+          statMap.set(userId, {
+            name: action.user.username,
+            views: 0,
+            purchases: 0,
+            view_count: new Map(),
+            purchase_count: new Map(),
+          });
+        }
+    
+        const userStats = statMap.get(userId);
+        const productName = action.product?.name || "No product name";
+    
+        if (action.type === "VIEW") {
+          userStats.views++;
+          const currentViews = userStats.view_count.get(productName) || 0;
+          userStats.view_count.set(productName, currentViews + 1);
+        }
+    
+        if (action.type === "BUY") {
+          userStats.purchases++;
+          const currentBuys = userStats.purchase_count.get(productName) || 0;
+          userStats.purchase_count.set(productName, currentBuys + 1);
+        }
+      }
+    
+      const getMostCountedItem = (countMap: any) => {
+        let maxCount = -1;
+        let maxItem = null;
+        for (const [item, count] of countMap.entries()) {
+          if (count > maxCount) {
+            maxCount = count;
+            maxItem = item;
+          }
+        }
+        return maxItem;
+      };
   
-    const statMap = new Map<string, UserStats>();
-  
-    for (const action of actions) {
-      const userId = action.userId;
-      const username = action.user?.username;
-      const productName = action.product?.name;
-  
-      if (!userId || !username || !productName) continue;
-  
-      if (!statMap.has(userId)) {
-        statMap.set(userId, {
-          username,
-          views: 0,
-          purchases: 0,
-          v_count: {},
-          p_count: {},
+      const result = [];
+    
+      for (const [, stats] of statMap.entries()) {
+        result.push({
+          username: stats.name,
+          views: stats.views,
+          purchases: stats.purchases,
+          most_view_item_name: getMostCountedItem(stats.view_count) || "N/A",
+          most_purchase_item_name: getMostCountedItem(stats.purchase_count) || "N/A",
         });
       }
-  
-      // Use "as UserStats" to tell TypeScript what type it is
-      const userStats = statMap.get(userId) as UserStats;
-  
-      if (action.type === "VIEW") {
-        userStats.views++;
-        userStats.v_count[productName] = (userStats.v_count[productName] || 0) + 1;
-      }
-  
-      if (action.type === "BUY") {
-        userStats.purchases++;
-        userStats.p_count[productName] = (userStats.p_count[productName] || 0) + 1;
-      }
-    }
-  
-    const result = Array.from(statMap.values()).map((stats) => {
-      const mostViewedItem =
-        Object.entries(stats.v_count).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
-      const mostPurchasedItem =
-        Object.entries(stats.p_count).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
-      return {
-        username: stats.username,
-        views: stats.views,
-        purchases: stats.purchases,
-        mostViewedItem,
-        mostPurchasedItem,
-      };
-    });
-    console.log(result);
-    return result
+      res.status(200).json(result);
+      return;
+   }catch(err){
+        console.log(err);
+        res.status(500).send('Server error')
+   }
   };
   
   

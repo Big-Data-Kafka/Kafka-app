@@ -25,7 +25,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 		if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
 		const token = jwt.sign(
-			{ id: user.id, username: user.username },
+			{ id: user.id, username: user.username, isAdmin: user.isAdmin },
 			JWT_SECRET,
 			{ expiresIn: TOKEN_EXPIRES },
 		);
@@ -36,7 +36,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
 			maxAge: 3600 * 1000,
 		});
-		return res.status(200).json({ message: "Successful Login" });
+		return res.status(200).json({ message: "Successful Login", isAdmin: user.isAdmin });
 	} catch (err) {
 		console.log(err);
 		return res.status(500).json({
