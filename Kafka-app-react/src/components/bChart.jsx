@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   BarChart,
   Bar,
@@ -9,55 +9,33 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-const data = [ //fetch from DB
-  {
-    name: "Product A",
-    views: 20,
-    purchases: 15,
-    abandonments: 5,
-  },
-  {
-    name: "Product B",
-    views: 50,
-    purchases: 30,
-    abandonments: 10,
-  },
-  {
-    name: "Product C",
-    views: 80,
-    purchases: 60,
-    abandonments: 12,
-  },
-  {
-    name: "Product D",
-    views: 60,
-    purchases: 50,
-    abandonments: 8,
-  },
-  {
-    name: "Product E",
-    views: 90,
-    purchases: 75,
-    abandonments: 18,
-  },
-  {
-    name: "Product F",
-    views: 70,
-    purchases: 40,
-    abandonments: 9,
-  },
-  {
-    name: "Product G",
-    views: 110,
-    purchases: 80,
-    abandonments: 14,
-  },
-];
 const BChart = () => {
+  const [stats, setStats]= useState([])
+  useEffect(()=>{
+    const fetchStats= async()=>{
+      try{
+        const res= await fetch('http://localhost:5000/api/statsPerProduct',
+          {
+            headers: {
+              "Content-Type": "application/json"
+            },
+          },
+        );
+        const data= await res.json();
+        if(res.ok){
+          setStats(data);
+          return;
+        }
+      }catch(err){
+        console.log(err);
+      }
+    }
+    fetchStats();
+  },[])
   return (
     <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={data}
+                data={stats}
                 margin={{
                   top: 5,
                   right: 30,

@@ -17,6 +17,7 @@ const Home = () => {
 						"Content-Type": "application/json",
 					},
 				});
+				console.log(res);
 				const data = await res.json();
 				setLoading(false);
 				if (res.status === 401) {
@@ -27,6 +28,7 @@ const Home = () => {
 				} else {
 					setError(data.message);
 				}
+
 			} catch (err) {
 				console.log(err);
 				setError(data.message);

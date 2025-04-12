@@ -2,7 +2,7 @@ import React from "react";
 import AdminNavBar from "../components/adminNavbar";
 import OverviewCards from "../components/overviewCards";
 import BChart from "../components/bChart";
-import MostList from "../components/mostList";
+import MostListContainer from "../components/mostListContainer";
 import FilterBox from "../components/filterBox";
 import UserBehavior from "../components/userBehavior";
 
@@ -20,13 +20,12 @@ const Dashboard = () => {
             <BChart />
           </div>
           <div>
-            <MostList label= {'Most viewed items'} isView={true}/>
-            <MostList label= {'Most purchased items'} isView={false}/>
+            <MostListContainer/>
           </div>
         </div>
         {/* user Behavior table */}
         <div className="my-5">
-          <h5 className="text-2xl mb-4">User behavior c</h5>
+          <h5 className="text-2xl mb-4">User behavior table</h5>
           <FilterBox />
           <UserBehavior />
         </div>

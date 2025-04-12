@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import authRoute from "./routes/auth";
 import productsRoute from "./routes/products";
 import actionRoute from "./routes/action";
+import dashboardRoute from "./routes/dashboard"
 const app = express();
 
 app.use(
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use("/", authRoute);
 app.use("/", productsRoute);
 app.use("/", actionRoute);
+app.use('/', dashboardRoute)
 
 const server = http.createServer(app);
 

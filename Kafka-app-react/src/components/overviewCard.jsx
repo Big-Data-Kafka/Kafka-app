@@ -8,7 +8,12 @@ const OverviewCard = ({Icon, count, label, color}) => {
             {Icon}
           </span>
           <div className="flex flex-col">
-            <span className="text-xl">{count}</span>
+            <span className="text-xl">{
+              label== "Abandonment rate"|| label== "Conversion rate"
+              ? `${count} %` 
+              : count
+              }
+            </span>
             <span className="text-sm text-gray-500">{label}</span>
           </div>
         </div>
