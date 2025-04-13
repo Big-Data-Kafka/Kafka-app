@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import {
   BarChart,
   Bar,
@@ -9,33 +8,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-const BChart = () => {
-  const [stats, setStats]= useState([])
-  useEffect(()=>{
-    const fetchStats= async()=>{
-      try{
-        const res= await fetch('http://localhost:5000/api/statsPerProduct',
-          {
-            headers: {
-              "Content-Type": "application/json"
-            },
-          },
-        );
-        const data= await res.json();
-        if(res.ok){
-          setStats(data);
-          return;
-        }
-      }catch(err){
-        console.log(err);
-      }
-    }
-    fetchStats();
-  },[])
+const BChart = ({data}) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={stats}
+                data={data}
                 margin={{
                   top: 5,
                   right: 30,

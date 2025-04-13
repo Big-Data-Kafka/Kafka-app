@@ -1,47 +1,43 @@
 import React, { createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../components/adminNavbar";
 import OverviewCards from "../components/overviewCards";
 import BChart from "../components/bChart";
 import MostListContainer from "../components/mostListContainer";
 import FilterBox from "../components/filterBox";
 import UserBehavior from "../components/userBehavior";
+import { io } from "socket.io-client";
+import Loading from "../components/Loading"
 
 export const FilterContext = createContext();
 const Dashboard = () => {
+  const socket = io("http://localhost:5000");
   const [tosearch, setToSearch]= useState("");
-  const navigate = useNavigate();
+  const [data, setData] = useState(null);
   useEffect(() => {
-      const checkAuth = async () => {
-        try {
-          const res = await fetch("http://localhost:5000/api/check-auth", {
-            credentials: "include",
-          });
-          const data = await res.json();
-          if (!res.ok || !data.user.isAdmin) {
-            navigate("/");
-          }
-          return;
-        } catch (err) {
-          console.log(err);
-        }
+      socket.on("dashboard-update", (incoming) => {
+        setData(incoming);
+      });
+  
+      return () => {
+        socket.off("dashboard-update");
       };
-      checkAuth();
     }, []);
   return (
-    <div className="h-min-screen bg-gray-200">
+    !data 
+    ? <Loading/>
+    : <div className="h-min-screen bg-gray-200">
       <AdminNavBar />
       <div className="overflow-y-auto px-5">
         {/* overview */}
-        <OverviewCards />
+        <OverviewCards  data= {data.overall}/>
 
         {/* each items */}
         <div className="grid lg:grid-cols-[2fr_1fr] sm:grid-cols-1 mt-10">
           <div className="h-120">
-            <BChart />
+            <BChart data= {data.perProduct} />
           </div>
           <div>
-            <MostListContainer />
+            <MostListContainer data={data.mostVP} />
           </div>
         </div>
         {/* user Behavior table */}
@@ -49,7 +45,7 @@ const Dashboard = () => {
           <h5 className="text-2xl mb-4">User behavior table</h5>
           <FilterContext.Provider value={{tosearch, setToSearch}}>
             <FilterBox />
-            <UserBehavior />
+            <UserBehavior data= {data.userStats}/>
           </FilterContext.Provider>
         </div>
       </div>

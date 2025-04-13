@@ -1,31 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { FilterContext } from "../pages/dashboard";
-const UserBehavior = () => {
+import { FilterContext } from "../pages/Dashboard";
+const UserBehavior = ({data}) => {
   const { tosearch } = useContext(FilterContext);
-  const [stats, setStats] = useState([]);
-  const filtered = stats.filter((stat) => {
-    const target = stat.username.toLowerCase();
+  const filtered = data.filter((eachData) => {
+    const target = eachData.username.toLowerCase();
     return target.includes(tosearch.toLowerCase());
   });
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/userStats", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setStats(data);
-          return;
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchStats();
-  }, []);
   return (
     <table className="w-full text-sm text-left bg-white rounded-lg mt-5">
       <thead className="bg-gray-100 text-gray-500">
