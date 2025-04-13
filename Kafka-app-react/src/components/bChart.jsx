@@ -44,7 +44,7 @@ const BChart = () => {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey="name" className='text-sm'/>
                 <YAxis />
                 <Tooltip />
                 <Legend />

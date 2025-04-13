@@ -85,7 +85,7 @@ export const getUserStats = async (req: express.Request, res: express.Response) 
           product: true,
         },
       });
-    
+
       const statMap = new Map();
     
       for (const action of actions) {
@@ -106,27 +106,29 @@ export const getUserStats = async (req: express.Request, res: express.Response) 
     
         if (action.type === "VIEW") {
           userStats.views++;
-          const currentViews = userStats.view_count.get(productName) || 0;
-          userStats.view_count.set(productName, currentViews + 1);
+          const currentViews = userStats.view_count.get(productName) || {image: "", count: 0};
+          userStats.view_count.set(productName, {image: action.product.image ,count: currentViews.count + 1});
         }
     
         if (action.type === "BUY") {
           userStats.purchases++;
-          const currentBuys = userStats.purchase_count.get(productName) || 0;
-          userStats.purchase_count.set(productName, currentBuys + 1);
+          const currentBuys = userStats.purchase_count.get(productName) || {image: "", count: 0};
+          userStats.purchase_count.set(productName, {image: action.product.image, count: currentBuys.count+1});
         }
       }
     
       const getMostCountedItem = (countMap: any) => {
         let maxCount = -1;
-        let maxItem = null;
-        for (const [item, count] of countMap.entries()) {
+        let itemName = null;
+        let itemImage= "";
+        for (const [item, {image, count}] of countMap.entries()) {
           if (count > maxCount) {
             maxCount = count;
-            maxItem = item;
+            itemName = item;
+            itemImage= image;
           }
         }
-        return maxItem;
+        return {itemName, itemImage};
       };
   
       const result = [];
@@ -136,8 +138,8 @@ export const getUserStats = async (req: express.Request, res: express.Response) 
           username: stats.name,
           views: stats.views,
           purchases: stats.purchases,
-          most_view_item_name: getMostCountedItem(stats.view_count) || "N/A",
-          most_purchase_item_name: getMostCountedItem(stats.purchase_count) || "N/A",
+          most_view_item: getMostCountedItem(stats.view_count) || {itemName: "N/a", itemImage: ""},
+          most_purchase_item: getMostCountedItem(stats.purchase_count) ||  {itemName: "N/a", itemImage: ""},
         });
       }
       res.status(200).json(result);
