@@ -25,13 +25,13 @@ const run = async () => {
 						type: action,
 					},
 				});
-				console.log(createdAction);
 				const producer = kafka.producer();
 				await producer.connect();
 				await producer.send({
 					topic: "data-updated",
 					messages: [{ value: "data-updated" }],
 				});
+				console.log("data-updated published");
 				await producer.disconnect();
 			}
 		},
